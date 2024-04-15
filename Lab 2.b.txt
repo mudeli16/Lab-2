@@ -1,0 +1,36 @@
+# Load necessary libraries
+library(randomForest)
+library(ggplot2)
+
+# Read data from the provided dataset
+data <- read.csv("C:/Users/mahit/OneDrive/Desktop/ml/oulad-assessments.csv")
+# Update with the actual file path
+
+# First, split the data into a training set and a testing set
+set.seed(123)  # for reproducibility
+training_indices <- sample(1:nrow(data), 0.8 * nrow(data))  
+training_set <- data[training_indices, ]
+testing_set <- data[-training_indices, ]
+
+# Train the model
+model <- randomForest(score ~ ., data = training_set)
+
+# Make predictions
+predictions <- predict(model, testing_set)
+
+# Evaluate the model
+conf_matrix <- table(predictions, testing_set$score)
+print(conf_matrix)
+
+# Visualize the confusion matrix
+ggplot(data = as.data.frame(conf_matrix), aes(x = Var1, y = Var2, fill = Freq)) +
+  geom_tile() +
+  labs(title = "Confusion Matrix",
+       x = "Predicted",
+       y = "Actual",
+       fill = "Frequency") +
+  theme_minimal()
+
+# Visualize the random forest
+plot(model)
+
